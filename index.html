@@ -3,26 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Crystal Visuals — Премиум визуальный клиент Minecraft</title>
-  <meta name="description" content="Crystal Visuals — красивый и мощный визуальный клиент для Minecraft. Кристальная графика, высокий FPS, стиль и комфорт." />
+  <title>Crystal — Minecraft Client</title>
+  <meta name="description" content="Crystal — премиум клиент Minecraft. Попробуй Click GUI прямо на сайте." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #03030a;
-      --bg-2: #0a0618;
-      --card: rgba(20, 12, 45, 0.7);
+      --bg: #02020a;
       --primary: #a855f7;
-      --primary-2: #c084fc;
       --cyan: #22d3ee;
       --pink: #e879f9;
-      --text: #f1f5f9;
+      --text: #f8fafc;
       --muted: #94a3b8;
       --border: rgba(168, 85, 247, 0.28);
-      --glass: rgba(255, 255, 255, 0.05);
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
@@ -32,865 +27,940 @@
       overflow-x: hidden;
       line-height: 1.65;
     }
-
-    /* ========== BG ========== */
-    .bg-layer {
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      background:
-        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(168, 85, 247, 0.25), transparent),
-        radial-gradient(ellipse 60% 40% at 90% 10%, rgba(34, 211, 238, 0.15), transparent),
-        radial-gradient(ellipse 50% 30% at 50% 100%, rgba(232, 121, 249, 0.12), transparent),
-        var(--bg);
-    }
-    .bg-effects {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      overflow: hidden;
-      pointer-events: none;
-    }
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(90px);
-      opacity: 0.5;
-      animation: drift 20s ease-in-out infinite;
-    }
-    .orb-a { width: 480px; height: 480px; background: var(--primary); top: -160px; left: -100px; }
-    .orb-b { width: 380px; height: 380px; background: var(--cyan); bottom: -80px; right: -60px; animation-delay: -7s; opacity: 0.35; }
-    .orb-c { width: 280px; height: 280px; background: var(--pink); top: 40%; left: 60%; animation-delay: -14s; opacity: 0.25; }
-    @keyframes drift {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      40% { transform: translate(50px, -40px) scale(1.08); }
-      70% { transform: translate(-35px, 30px) scale(0.94); }
+    #bg { position: fixed; inset: 0; z-index: -2; width: 100%; height: 100%; }
+    .vignette {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background: radial-gradient(ellipse at 50% 30%, transparent 30%, rgba(2,2,10,0.9) 100%);
     }
 
-    .particle {
-      position: absolute;
-      border-radius: 50%;
-      background: var(--primary-2);
-      box-shadow: 0 0 10px var(--primary-2);
-      opacity: 0.55;
-      animation: rise linear infinite;
-    }
-    @keyframes rise {
-      0% { transform: translateY(105vh) scale(0.3); opacity: 0; }
-      12% { opacity: 0.7; }
-      88% { opacity: 0.4; }
-      100% { transform: translateY(-15vh) scale(1.1); opacity: 0; }
-    }
-
-    /* ========== NAV ========== */
     nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 200;
-      padding: 0.95rem 1.75rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(3, 3, 10, 0.72);
-      backdrop-filter: blur(18px);
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.05rem 1.8rem;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(2,2,10,0.55);
+      backdrop-filter: blur(22px);
       border-bottom: 1px solid transparent;
-      transition: border-color 0.3s, background 0.3s;
+      transition: 0.35s;
     }
-    nav.scrolled {
-      background: rgba(3, 3, 10, 0.92);
-      border-bottom-color: var(--border);
-    }
+    nav.on { background: rgba(2,2,10,0.92); border-bottom-color: var(--border); }
     .logo {
       font-family: 'Orbitron', sans-serif;
-      font-weight: 700;
-      font-size: 1.28rem;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      background: linear-gradient(120deg, #f0abfc, #22d3ee, #a855f7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-weight: 800; font-size: 1.35rem; letter-spacing: 1px;
+      background: linear-gradient(90deg, #f0abfc, #22d3ee, #a855f7);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    .logo span { font-size: 1.4rem; filter: drop-shadow(0 0 10px var(--primary)); -webkit-text-fill-color: initial; }
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 1.6rem;
-    }
+    .nav-links { display: flex; align-items: center; gap: 1.8rem; }
     .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.92rem;
-      font-weight: 500;
-      transition: color 0.25s;
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      font-weight: 500; transition: 0.2s;
     }
-    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover { color: #fff; }
     .nav-cta {
-      padding: 0.5rem 1.25rem;
-      background: linear-gradient(135deg, var(--primary), #7c3aed);
-      color: #fff;
-      border-radius: 999px;
-      font-weight: 600;
-      font-size: 0.88rem;
+      padding: 0.5rem 1.3rem;
+      background: linear-gradient(135deg, #a855f7, #7c3aed);
+      color: #fff; border-radius: 999px; font-weight: 600; font-size: 0.88rem;
       text-decoration: none;
-      box-shadow: 0 0 22px rgba(168, 85, 247, 0.45);
-      transition: transform 0.25s, box-shadow 0.25s;
+      box-shadow: 0 0 25px rgba(168,85,247,0.45);
+      transition: 0.25s;
     }
     .nav-cta:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 32px rgba(168, 85, 247, 0.7);
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 0 40px rgba(168,85,247,0.7);
     }
 
-    /* ========== HERO ========== */
     .hero {
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
       text-align: center;
-      padding: 7rem 1.4rem 5rem;
+      padding: 7.5rem 1.5rem 5rem;
       position: relative;
+    }
+    .hero-orb {
+      position: absolute;
+      width: min(650px, 90vw); height: min(650px, 90vw);
+      background: radial-gradient(circle, rgba(168,85,247,0.28) 0%, rgba(34,211,238,0.08) 40%, transparent 70%);
+      top: 45%; left: 50%;
+      transform: translate(-50%, -50%);
+      filter: blur(48px);
+      animation: orbPulse 7s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes orbPulse {
+      0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.8; }
+      50% { transform: translate(-50%,-50%) scale(1.12); opacity: 1; }
     }
     .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.55rem;
-      padding: 0.42rem 1.1rem;
-      background: var(--glass);
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.42rem 1.15rem;
+      background: rgba(255,255,255,0.04);
       border: 1px solid var(--border);
       border-radius: 999px;
-      font-size: 0.84rem;
-      color: var(--cyan);
+      font-size: 0.84rem; color: var(--cyan);
       margin-bottom: 1.6rem;
-      backdrop-filter: blur(10px);
-      animation: fadeUp 0.9s ease both;
+      backdrop-filter: blur(12px);
+      animation: up 1s ease both;
     }
     .hero-badge i {
-      width: 8px; height: 8px;
-      background: var(--cyan);
-      border-radius: 50%;
-      box-shadow: 0 0 12px var(--cyan);
-      animation: blink 1.8s infinite;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--cyan); box-shadow: 0 0 12px var(--cyan);
+      animation: blink 1.7s infinite;
     }
-    @keyframes blink {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.35; transform: scale(1.4); }
-    }
-
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
     .hero h1 {
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(2.7rem, 9vw, 5.4rem);
+      font-size: clamp(3.2rem, 12vw, 7.5rem);
       font-weight: 800;
-      line-height: 1.08;
-      margin-bottom: 0.4rem;
-      background: linear-gradient(125deg, #f0abfc 0%, #22d3ee 40%, #a855f7 80%, #f0abfc 100%);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      line-height: 0.92;
+      letter-spacing: -2px;
+      margin-bottom: 0.7rem;
+      background: linear-gradient(115deg, #fce7f3, #e879f9 25%, #22d3ee 50%, #a855f7 75%, #fce7f3);
+      background-size: 250% auto;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
-      animation: fadeUp 0.9s 0.12s ease both, shine 6s linear infinite;
-      filter: drop-shadow(0 0 40px rgba(168, 85, 247, 0.35));
+      animation: up 1s 0.12s ease both, shine 7s linear infinite;
+      filter: drop-shadow(0 0 55px rgba(168,85,247,0.4));
     }
-    @keyframes shine {
-      to { background-position: 200% center; }
-    }
+    @keyframes shine { to { background-position: 250% center; } }
     .hero-sub {
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1rem, 2.8vw, 1.35rem);
-      font-weight: 500;
-      color: var(--primary-2);
+      font-size: clamp(0.95rem, 2.6vw, 1.3rem);
+      color: var(--pink);
+      letter-spacing: 4px;
+      text-transform: uppercase;
       margin-bottom: 1.3rem;
-      letter-spacing: 1px;
-      animation: fadeUp 0.9s 0.22s ease both;
+      animation: up 1s 0.22s ease both;
     }
     .hero p {
-      font-size: clamp(1.02rem, 2.4vw, 1.22rem);
+      font-size: clamp(1.05rem, 2.4vw, 1.25rem);
       color: var(--muted);
-      max-width: 540px;
-      margin-bottom: 2.4rem;
-      animation: fadeUp 0.9s 0.32s ease both;
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+      animation: up 1s 0.32s ease both;
     }
     .hero-btns {
-      display: flex;
-      gap: 0.9rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      animation: fadeUp 0.9s 0.42s ease both;
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      animation: up 1s 0.42s ease both;
     }
-
-    .btn-glow {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.55rem;
-      padding: 1.05rem 2.3rem;
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 1.1rem 2.4rem;
       background: linear-gradient(135deg, #a855f7, #7c3aed, #22d3ee);
-      background-size: 220% 220%;
-      color: #fff;
-      font-weight: 700;
-      font-size: 1.08rem;
-      border: none;
-      border-radius: 999px;
-      cursor: pointer;
-      text-decoration: none;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.3s, box-shadow 0.3s;
-      box-shadow: 0 0 28px rgba(168, 85, 247, 0.55), 0 10px 28px rgba(0,0,0,0.35);
-      animation: gradMove 5s ease infinite;
+      background-size: 200% 200%;
+      color: #fff; font-weight: 700; font-size: 1.08rem;
+      border: none; border-radius: 999px;
+      text-decoration: none; cursor: pointer;
+      box-shadow: 0 0 38px rgba(168,85,247,0.55), 0 10px 30px rgba(0,0,0,0.35);
+      transition: 0.3s;
+      animation: grad 5s ease infinite;
     }
-    @keyframes gradMove {
-      0%, 100% { background-position: 0% 50%; }
+    @keyframes grad {
+      0%,100% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
     }
-    .btn-glow::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.28), transparent 70%);
-      transform: translateX(-120%);
-      transition: transform 0.55s ease;
-    }
-    .btn-glow:hover::after { transform: translateX(120%); }
-    .btn-glow:hover {
+    .btn:hover {
       transform: translateY(-4px) scale(1.04);
-      box-shadow: 0 0 48px rgba(168, 85, 247, 0.85), 0 14px 36px rgba(0,0,0,0.4);
+      box-shadow: 0 0 55px rgba(168,85,247,0.85), 0 16px 40px rgba(0,0,0,0.4);
     }
-
-    .btn-ghost {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 1.05rem 1.9rem;
-      background: transparent;
-      color: var(--text);
-      font-weight: 600;
-      font-size: 1.02rem;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      text-decoration: none;
-      transition: all 0.3s;
-      backdrop-filter: blur(8px);
+    .btn-out {
+      display: inline-flex; align-items: center;
+      padding: 1.1rem 2rem;
+      background: rgba(255,255,255,0.03);
+      color: #fff; font-weight: 600; font-size: 1.05rem;
+      border: 1px solid var(--border); border-radius: 999px;
+      text-decoration: none; transition: 0.3s;
+      backdrop-filter: blur(10px);
     }
-    .btn-ghost:hover {
-      background: var(--glass);
+    .btn-out:hover {
+      background: rgba(168,85,247,0.12);
       border-color: var(--primary);
       transform: translateY(-2px);
     }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(28px); }
+    @keyframes up {
+      from { opacity: 0; transform: translateY(32px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
     .scroll-hint {
-      position: absolute;
-      bottom: 2.2rem;
-      left: 50%;
+      position: absolute; bottom: 2.5rem; left: 50%;
       transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.35rem;
-      color: var(--muted);
-      font-size: 0.78rem;
-      animation: bob 2.4s infinite;
+      width: 1.5px; height: 50px;
+      background: linear-gradient(to bottom, var(--primary), transparent);
+      animation: scrollH 2.2s ease-in-out infinite;
     }
-    .scroll-hint .arr {
-      width: 18px; height: 18px;
-      border-right: 2px solid var(--primary);
-      border-bottom: 2px solid var(--primary);
-      transform: rotate(45deg);
+    @keyframes scrollH {
+      0%,100% { opacity: 0.25; height: 40px; }
+      50% { opacity: 1; height: 55px; }
     }
-    @keyframes bob {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(9px); }
+    .crystals { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .crystal {
+      position: absolute;
+      background: linear-gradient(145deg, rgba(168,85,247,0.5), rgba(34,211,238,0.25));
+      clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+      animation: floatC 14s ease-in-out infinite;
+      filter: drop-shadow(0 0 12px rgba(168,85,247,0.45));
+    }
+    @keyframes floatC {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-45px) rotate(16deg); }
     }
 
-    /* ========== STATS ========== */
     .stats {
       max-width: 1000px;
       margin: -1rem auto 0;
-      padding: 0 1.4rem 4rem;
+      padding: 0 1.5rem 5rem;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
+      gap: 1.1rem;
     }
-    .stat-card {
-      background: var(--card);
+    .stat {
+      background: rgba(12,8,28,0.8);
       border: 1px solid var(--border);
-      border-radius: 1.1rem;
-      padding: 1.4rem 1rem;
+      border-radius: 1.3rem;
+      padding: 1.8rem 1rem;
       text-align: center;
-      backdrop-filter: blur(12px);
-      transition: transform 0.35s, box-shadow 0.35s;
-      opacity: 0;
-      transform: translateY(24px);
+      backdrop-filter: blur(16px);
+      transition: 0.4s;
     }
-    .stat-card.visible { opacity: 1; transform: translateY(0); }
-    .stat-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 16px 36px rgba(0,0,0,0.3), 0 0 24px rgba(168, 85, 247, 0.15);
+    .stat:hover {
+      transform: translateY(-8px);
+      border-color: rgba(168,85,247,0.55);
+      box-shadow: 0 22px 45px rgba(0,0,0,0.35), 0 0 30px rgba(168,85,247,0.15);
     }
-    .stat-num {
+    .stat-n {
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.7rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--cyan), var(--pink));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 2.2rem; font-weight: 800;
+      background: linear-gradient(135deg, #22d3ee, #e879f9);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 0.25rem;
     }
-    .stat-label { color: var(--muted); font-size: 0.88rem; }
+    .stat-l { color: var(--muted); font-size: 0.9rem; margin-top: 0.35rem; }
 
-    /* ========== SECTIONS COMMON ========== */
-    section {
-      padding: 5rem 1.4rem;
-      max-width: 1080px;
-      margin: 0 auto;
-    }
-    .sec-title {
+    section { padding: 5.5rem 1.5rem; max-width: 1100px; margin: 0 auto; }
+    .sh { text-align: center; margin-bottom: 3rem; }
+    .sh h2 {
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.75rem, 4vw, 2.55rem);
+      font-size: clamp(1.9rem, 4.5vw, 2.8rem);
       font-weight: 700;
-      text-align: center;
-      margin-bottom: 0.7rem;
       background: linear-gradient(135deg, #e879f9, #22d3ee);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
+      margin-bottom: 0.7rem;
     }
-    .sec-sub {
-      text-align: center;
-      color: var(--muted);
-      max-width: 520px;
-      margin: 0 auto 3.2rem;
-      font-size: 1.05rem;
-    }
+    .sh p { color: var(--muted); font-size: 1.08rem; max-width: 480px; margin: 0 auto; }
 
-    /* ========== FEATURES ========== */
-    .features-grid {
+    .feats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-      gap: 1.35rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
     }
-    .f-card {
-      background: var(--card);
+    .feat {
+      background: rgba(12,8,28,0.75);
       border: 1px solid var(--border);
-      border-radius: 1.2rem;
-      padding: 1.7rem;
+      border-radius: 1.4rem;
+      padding: 2rem 1.6rem;
       backdrop-filter: blur(14px);
-      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: 0.4s cubic-bezier(0.22,1,0.36,1);
       position: relative;
       overflow: hidden;
-      opacity: 0;
-      transform: translateY(36px);
     }
-    .f-card.visible { opacity: 1; transform: translateY(0); }
-    .f-card::before {
+    .feat::after {
       content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, transparent, var(--primary), var(--cyan), transparent);
-      opacity: 0;
-      transition: opacity 0.35s;
+      opacity: 0; transition: 0.35s;
     }
-    .f-card:hover {
+    .feat:hover {
       transform: translateY(-10px);
-      border-color: rgba(168, 85, 247, 0.55);
-      box-shadow: 0 22px 44px rgba(0,0,0,0.35), 0 0 28px rgba(168, 85, 247, 0.18);
+      border-color: rgba(168,85,247,0.55);
+      box-shadow: 0 28px 55px rgba(0,0,0,0.4), 0 0 35px rgba(168,85,247,0.12);
     }
-    .f-card:hover::before { opacity: 1; }
-    .f-icon {
-      width: 50px; height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      background: linear-gradient(145deg, rgba(168, 85, 247, 0.22), rgba(34, 211, 238, 0.12));
+    .feat:hover::after { opacity: 1; }
+    .feat-ic {
+      width: 52px; height: 52px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.55rem;
+      background: linear-gradient(145deg, rgba(168,85,247,0.25), rgba(34,211,238,0.12));
       border-radius: 13px;
-      margin-bottom: 1.1rem;
+      margin-bottom: 1.15rem;
       border: 1px solid var(--border);
-      transition: transform 0.35s;
+      transition: 0.35s;
     }
-    .f-card:hover .f-icon { transform: scale(1.12) rotate(-4deg); }
-    .f-card h3 { font-size: 1.18rem; font-weight: 600; margin-bottom: 0.45rem; }
-    .f-card p { color: var(--muted); font-size: 0.94rem; }
+    .feat:hover .feat-ic { transform: scale(1.1) rotate(-4deg); }
+    .feat h3 { font-size: 1.18rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .feat p { color: var(--muted); font-size: 0.95rem; }
 
-    /* ========== SHOWCASE ========== */
+    /* ========== INTERACTIVE CLICK GUI ========== */
+    .gui-section { padding: 5rem 1.2rem 6rem; max-width: 980px; margin: 0 auto; }
+    .click-gui {
+      background: rgba(18, 22, 38, 0.92);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.55), 0 0 45px rgba(168,85,247,0.12);
+      display: flex;
+      min-height: 460px;
+      max-height: 560px;
+      backdrop-filter: blur(20px);
+    }
+    .gui-side {
+      width: 165px;
+      background: rgba(10, 12, 22, 0.95);
+      border-right: 1px solid rgba(255,255,255,0.07);
+      padding: 0.9rem 0;
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+    .gui-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.05rem; font-weight: 700;
+      text-align: center; letter-spacing: 2px;
+      padding: 0.35rem 0.5rem 1rem;
+      color: #e2e8f0;
+    }
+    .gui-tab {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.55rem 1rem;
+      font-size: 0.84rem; color: #94a3b8;
+      cursor: pointer; transition: 0.2s;
+      border-left: 3px solid transparent;
+      user-select: none;
+    }
+    .gui-tab:hover { background: rgba(255,255,255,0.04); color: #e2e8f0; }
+    .gui-tab.active {
+      background: rgba(168,85,247,0.14);
+      color: #e879f9;
+      border-left-color: #a855f7;
+    }
+    .gui-tab .cnt { margin-left: auto; font-size: 0.72rem; opacity: 0.65; }
+    .gui-main {
+      flex: 1; padding: 1rem 1.1rem;
+      overflow-y: auto;
+      display: none;
+    }
+    .gui-main.active { display: block; animation: guiIn 0.22s ease; }
+    @keyframes guiIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .gui-search {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: rgba(0,0,0,0.28);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px;
+      padding: 0.48rem 0.85rem;
+      margin-bottom: 0.95rem;
+      color: #64748b; font-size: 0.85rem;
+    }
+    .m-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.55rem;
+    }
+    .m-card {
+      background: rgba(28, 32, 50, 0.75);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 0.75rem 0.85rem;
+      transition: 0.2s;
+    }
+    .m-card:hover {
+      border-color: rgba(168,85,247,0.38);
+      background: rgba(38, 42, 62, 0.82);
+    }
+    .m-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 0.28rem;
+    }
+    .m-name { font-size: 0.88rem; font-weight: 600; color: #e2e8f0; }
+    .m-tog {
+      width: 34px; height: 18px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 99px; position: relative;
+      cursor: pointer; transition: 0.25s; flex-shrink: 0;
+    }
+    .m-tog.on { background: linear-gradient(90deg, #a855f7, #22d3ee); }
+    .m-tog::after {
+      content: ''; position: absolute;
+      top: 2px; left: 2px;
+      width: 14px; height: 14px;
+      background: #fff; border-radius: 50%;
+      transition: 0.25s;
+    }
+    .m-tog.on::after { transform: translateX(16px); }
+    .m-desc { font-size: 0.72rem; color: #94a3b8; line-height: 1.35; }
+
+    .t-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+      gap: 0.55rem;
+    }
+    .t-card {
+      background: rgba(28,32,50,0.75);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 0.9rem; text-align: center;
+      cursor: pointer; transition: 0.2s;
+    }
+    .t-card:hover, .t-card.active {
+      border-color: rgba(168,85,247,0.5);
+      background: rgba(42,46,68,0.88);
+    }
+    .t-dots { display: flex; gap: 5px; justify-content: center; margin-bottom: 0.5rem; }
+    .t-dots span { width: 13px; height: 13px; border-radius: 50%; }
+    .t-name { font-size: 0.82rem; color: #e2e8f0; }
+    .gui-note {
+      text-align: center; color: var(--muted);
+      font-size: 0.88rem; margin-top: 1.2rem;
+    }
+
     .showcase {
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
-      gap: 3rem;
+      gap: 3.5rem;
       align-items: center;
-      padding: 5.5rem 1.4rem;
-      max-width: 1080px;
+      padding: 6rem 1.5rem;
+      max-width: 1100px;
       margin: 0 auto;
     }
     .showcase-text h2 {
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.65rem, 3.5vw, 2.25rem);
-      margin-bottom: 1.1rem;
+      font-size: clamp(1.7rem, 3.8vw, 2.4rem);
+      margin-bottom: 1.2rem;
       background: linear-gradient(135deg, #f0abfc, #22d3ee);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    .showcase-text p {
-      color: var(--muted);
-      margin-bottom: 1.4rem;
-      font-size: 1.05rem;
+    .showcase-text p { color: var(--muted); font-size: 1.08rem; margin-bottom: 1.6rem; }
+    .checks { list-style: none; display: flex; flex-direction: column; gap: 0.9rem; }
+    .checks li {
+      display: flex; align-items: center; gap: 0.75rem;
+      font-weight: 500; font-size: 1.02rem;
     }
-    .check-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
-    }
-    .check-list li {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      font-weight: 500;
-    }
-    .check-list li::before {
-      content: '✦';
-      color: var(--cyan);
-      font-size: 1.05rem;
+    .checks li::before {
+      content: '✦'; color: var(--cyan); font-size: 1.1rem;
       filter: drop-shadow(0 0 7px var(--cyan));
     }
-
-    .crystal-wrap {
-      position: relative;
-      height: 340px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .crystal-stage {
+      position: relative; height: 340px;
+      display: flex; align-items: center; justify-content: center;
     }
-    .crystal-glow {
-      position: absolute;
-      width: 260px; height: 260px;
-      background: radial-gradient(circle, rgba(168, 85, 247, 0.4), transparent 70%);
-      border-radius: 50%;
-      filter: blur(28px);
-      animation: pulseG 4.5s ease-in-out infinite;
+    .c-glow {
+      position: absolute; width: 260px; height: 260px;
+      background: radial-gradient(circle, rgba(168,85,247,0.42), transparent 70%);
+      border-radius: 50%; filter: blur(28px);
+      animation: cGlow 5s ease-in-out infinite;
     }
-    @keyframes pulseG {
-      0%, 100% { transform: scale(1); opacity: 0.55; }
-      50% { transform: scale(1.2); opacity: 0.9; }
+    @keyframes cGlow {
+      0%,100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.22); opacity: 0.9; }
     }
-    .crystal {
-      width: 170px; height: 170px;
-      background: linear-gradient(150deg, rgba(168, 85, 247, 0.55), rgba(34, 211, 238, 0.3), rgba(232, 121, 249, 0.4));
+    .c-main {
+      width: 165px; height: 165px;
+      background: linear-gradient(150deg, rgba(168,85,247,0.55), rgba(34,211,238,0.28), rgba(232,121,249,0.38));
       clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
       position: relative;
-      animation: cFloat 7s ease-in-out infinite;
-      box-shadow: 0 0 55px rgba(168, 85, 247, 0.45), inset 0 0 35px rgba(255,255,255,0.12);
+      animation: cSpin 8s ease-in-out infinite;
+      box-shadow: 0 0 55px rgba(168,85,247,0.45), inset 0 0 35px rgba(255,255,255,0.1);
       border: 1px solid rgba(255,255,255,0.18);
     }
-    .crystal::before {
-      content: '';
-      position: absolute;
-      inset: 14px;
+    .c-main::before {
+      content: ''; position: absolute; inset: 14px;
       background: linear-gradient(155deg, rgba(255,255,255,0.2), transparent 55%);
       clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
     }
-    .crystal::after {
-      content: '';
-      position: absolute;
-      top: 28%; left: 32%;
-      width: 28%; height: 18%;
-      background: rgba(255,255,255,0.35);
-      filter: blur(4px);
-      border-radius: 40%;
-      transform: rotate(-25deg);
-    }
-    @keyframes cFloat {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(6deg); }
+    @keyframes cSpin {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-22px) rotate(7deg); }
     }
 
-    /* ========== STEPS ========== */
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.4rem;
-      counter-reset: step;
+    .steps {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.3rem;
     }
     .step {
-      background: var(--card);
+      background: rgba(12,8,28,0.75);
       border: 1px solid var(--border);
-      border-radius: 1.2rem;
-      padding: 1.8rem 1.4rem;
+      border-radius: 1.4rem;
+      padding: 2.2rem 1.4rem;
       text-align: center;
-      position: relative;
-      backdrop-filter: blur(12px);
-      transition: transform 0.35s, box-shadow 0.35s;
-      opacity: 0;
-      transform: translateY(30px);
+      transition: 0.4s;
     }
-    .step.visible { opacity: 1; transform: translateY(0); }
     .step:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 18px 40px rgba(0,0,0,0.3);
+      transform: translateY(-9px);
+      box-shadow: 0 22px 45px rgba(0,0,0,0.35);
     }
-    .step-num {
-      width: 42px; height: 42px;
-      margin: 0 auto 1.1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .step-n {
+      width: 48px; height: 48px;
+      margin: 0 auto 1.15rem;
+      display: flex; align-items: center; justify-content: center;
       font-family: 'Orbitron', sans-serif;
-      font-weight: 700;
-      font-size: 1.1rem;
-      background: linear-gradient(135deg, var(--primary), var(--cyan));
+      font-weight: 700; font-size: 1.2rem;
+      background: linear-gradient(135deg, #a855f7, #22d3ee);
       border-radius: 50%;
-      box-shadow: 0 0 18px rgba(168, 85, 247, 0.45);
+      box-shadow: 0 0 22px rgba(168,85,247,0.45);
     }
     .step h3 { font-size: 1.12rem; margin-bottom: 0.5rem; }
-    .step p { color: var(--muted); font-size: 0.92rem; }
+    .step p { color: var(--muted); font-size: 0.95rem; }
 
-    /* ========== FAQ ========== */
-    .faq-list {
-      max-width: 720px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
+    .faq {
+      max-width: 700px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 0.85rem;
     }
     .faq-item {
-      background: var(--card);
+      background: rgba(12,8,28,0.75);
       border: 1px solid var(--border);
       border-radius: 1rem;
-      overflow: hidden;
-      backdrop-filter: blur(10px);
-      transition: border-color 0.3s;
+      overflow: hidden; transition: 0.3s;
     }
-    .faq-item.open { border-color: rgba(168, 85, 247, 0.5); }
+    .faq-item.open { border-color: rgba(168,85,247,0.5); }
     .faq-q {
-      width: 100%;
-      padding: 1.15rem 1.3rem;
-      background: none;
-      border: none;
-      color: var(--text);
-      font-size: 1.02rem;
-      font-weight: 600;
-      text-align: left;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      font-family: inherit;
+      width: 100%; padding: 1.15rem 1.3rem;
+      background: none; border: none; color: var(--text);
+      font-size: 1.02rem; font-weight: 600; text-align: left;
+      cursor: pointer; display: flex; justify-content: space-between;
+      align-items: center; gap: 1rem; font-family: inherit;
     }
-    .faq-q span {
-      font-size: 1.3rem;
-      color: var(--primary-2);
-      transition: transform 0.3s;
-    }
+    .faq-q span { font-size: 1.35rem; color: var(--pink); transition: 0.3s; }
     .faq-item.open .faq-q span { transform: rotate(45deg); }
     .faq-a {
-      max-height: 0;
-      overflow: hidden;
+      max-height: 0; overflow: hidden;
       transition: max-height 0.4s ease, padding 0.3s;
-      color: var(--muted);
-      font-size: 0.95rem;
+      color: var(--muted); font-size: 0.95rem;
       padding: 0 1.3rem;
     }
     .faq-item.open .faq-a {
-      max-height: 200px;
+      max-height: 180px;
       padding: 0 1.3rem 1.2rem;
     }
 
-    /* ========== CTA ========== */
-    .cta-block {
+    .cta {
       text-align: center;
-      padding: 4.5rem 1.4rem 6rem;
-      max-width: 760px;
-      margin: 0 auto;
+      padding: 4.5rem 1.5rem 6.5rem;
+      max-width: 720px; margin: 0 auto;
     }
-    .cta-inner {
-      background: linear-gradient(145deg, rgba(168, 85, 247, 0.14), rgba(34, 211, 238, 0.08));
+    .cta-box {
+      background: linear-gradient(145deg, rgba(168,85,247,0.15), rgba(34,211,238,0.08));
       border: 1px solid var(--border);
-      border-radius: 1.8rem;
-      padding: 3.2rem 2rem;
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(16px);
+      border-radius: 2rem;
+      padding: 3.5rem 2rem;
+      position: relative; overflow: hidden;
     }
-    .cta-inner::before {
+    .cta-box::before {
       content: '';
-      position: absolute;
-      top: -60%; left: -60%;
-      width: 220%; height: 220%;
-      background: conic-gradient(from 0deg, transparent, rgba(168, 85, 247, 0.12), transparent 35%);
+      position: absolute; top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(168,85,247,0.13), transparent 30%);
       animation: spin 14s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .cta-inner > * { position: relative; z-index: 1; }
-    .cta-inner h2 {
+    .cta-box > * { position: relative; z-index: 1; }
+    .cta-box h2 {
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.55rem, 3.5vw, 2.15rem);
-      margin-bottom: 0.7rem;
+      font-size: clamp(1.7rem, 3.8vw, 2.3rem);
+      margin-bottom: 0.8rem;
     }
-    .cta-inner p {
-      color: var(--muted);
-      margin-bottom: 1.8rem;
-      font-size: 1.05rem;
-    }
+    .cta-box p { color: var(--muted); margin-bottom: 1.8rem; font-size: 1.08rem; }
 
-    /* ========== FOOTER ========== */
     footer {
-      text-align: center;
-      padding: 2.2rem 1.4rem;
+      text-align: center; padding: 2.2rem 1.5rem;
       border-top: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 0.9rem;
+      color: var(--muted); font-size: 0.9rem;
     }
-    footer a {
-      color: var(--primary-2);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
+    footer a { color: var(--pink); text-decoration: none; }
     footer a:hover { color: var(--cyan); }
 
-    /* ========== RESPONSIVE ========== */
     @media (max-width: 900px) {
-      .stats { grid-template-columns: repeat(2, 1fr); }
-      .showcase { grid-template-columns: 1fr; gap: 2.5rem; }
-      .steps-grid { grid-template-columns: 1fr; max-width: 380px; margin: 0 auto; }
+      .feats { grid-template-columns: 1fr 1fr; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .showcase { grid-template-columns: 1fr; gap: 2.8rem; }
+      .steps { grid-template-columns: 1fr; max-width: 360px; margin: 0 auto; }
       .nav-links a:not(.nav-cta) { display: none; }
     }
-    @media (max-width: 560px) {
-      .hero-btns { width: 100%; max-width: 300px; flex-direction: column; }
-      .btn-glow, .btn-ghost { width: 100%; justify-content: center; }
-      .stats { gap: 0.75rem; }
-      .stat-num { font-size: 1.4rem; }
+    @media (max-width: 650px) {
+      .click-gui { flex-direction: column; max-height: none; min-height: auto; }
+      .gui-side {
+        width: 100%; display: flex; flex-wrap: wrap;
+        border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07);
+        padding: 0.5rem; gap: 0.2rem;
+      }
+      .gui-logo { display: none; }
+      .gui-tab { border-left: none; border-radius: 6px; padding: 0.4rem 0.7rem; font-size: 0.78rem; }
+      .gui-tab.active { border-left: none; }
+      .feats { grid-template-columns: 1fr; }
+      .m-grid { grid-template-columns: 1fr 1fr; }
+      .hero-btns { flex-direction: column; width: 100%; max-width: 290px; }
+      .btn, .btn-out { width: 100%; justify-content: center; }
+    }
+    @media (max-width: 420px) {
+      .m-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="bg-layer"></div>
-  <div class="bg-effects" id="particles"></div>
+  <canvas id="bg"></canvas>
+  <div class="vignette"></div>
 
   <nav id="nav">
-    <div class="logo"><span>💎</span> Crystal Visuals</div>
+    <div class="logo">CRYSTAL</div>
     <div class="nav-links">
       <a href="#features">Фичи</a>
-      <a href="#how">Как купить</a>
-      <a href="#faq">FAQ</a>
+      <a href="#gui">GUI</a>
+      <a href="#how">Купить</a>
       <a href="https://discord.gg/Mr3k64MrT" target="_blank" rel="noopener" class="nav-cta">Купить</a>
     </div>
   </nav>
 
-  <!-- HERO -->
   <header class="hero">
-    <div class="hero-badge"><i></i> Премиум визуальный клиент</div>
-    <h1>Crystal Visuals</h1>
-    <div class="hero-sub">Minecraft · Visual Experience</div>
-    <p>Кристально чистая графика, высокий FPS и стиль, от которого не хочется отрываться. Один клиент — и игра выглядит совсем иначе.</p>
+    <div class="hero-orb"></div>
+    <div class="crystals" id="crystals"></div>
+    <div class="hero-badge"><i></i> Попробуй GUI прямо здесь ↓</div>
+    <h1>CRYSTAL</h1>
+    <div class="hero-sub">Minecraft Client</div>
+    <p>Стеклянный Click GUI, 70+ модулей и красивые темы. Кликай по вкладкам ниже — интерфейс работает.</p>
     <div class="hero-btns">
-      <a href="https://discord.gg/Mr3k64MrT" target="_blank" rel="noopener" class="btn-glow">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-        Купить в Discord
-      </a>
-      <a href="#features" class="btn-ghost">Смотреть фичи ↓</a>
+      <a href="https://discord.gg/Mr3k64MrT" target="_blank" rel="noopener" class="btn">Купить в Discord</a>
+      <a href="#gui" class="btn-out">Открыть GUI ↓</a>
     </div>
-    <div class="scroll-hint"><span>Листай вниз</span><div class="arr"></div></div>
+    <div class="scroll-hint"></div>
   </header>
 
-  <!-- STATS -->
-  <div class="stats" id="stats">
-    <div class="stat-card">
-      <div class="stat-num">240+</div>
-      <div class="stat-label">FPS на средних ПК</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">1.21+</div>
-      <div class="stat-label">Актуальные версии</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">∞</div>
-      <div class="stat-label">Визуальных эффектов</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">24/7</div>
-      <div class="stat-label">Поддержка в Discord</div>
-    </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n" data-to="34">0</div><div class="stat-l">Visuals</div></div>
+    <div class="stat"><div class="stat-n" data-to="16">0</div><div class="stat-l">Display</div></div>
+    <div class="stat"><div class="stat-n" data-to="29">0</div><div class="stat-l">Utils</div></div>
+    <div class="stat"><div class="stat-n" data-to="12">0</div><div class="stat-l">Тем</div></div>
   </div>
 
-  <!-- FEATURES -->
   <section id="features">
-    <h2 class="sec-title">Почему именно Crystal</h2>
-    <p class="sec-sub">Всё, что делает игру красивой и приятной — собрано в одном клиенте</p>
-    <div class="features-grid">
-      <div class="f-card">
-        <div class="f-icon">✨</div>
+    <div class="sh">
+      <h2>Почему Crystal</h2>
+      <p>Всё для красивой и комфортной игры</p>
+    </div>
+    <div class="feats">
+      <div class="feat">
+        <div class="feat-ic">✨</div>
         <h3>Кристальная графика</h3>
-        <p>Мягкое освещение, чистые текстуры и эффекты, которые превращают обычный мир в визуальный кайф.</p>
+        <p>Мягкое освещение, чистые эффекты и визуал, от которого не хочется отрываться.</p>
       </div>
-      <div class="f-card">
-        <div class="f-icon">⚡</div>
-        <h3>Высокий и стабильный FPS</h3>
-        <p>Оптимизированный рендер. Плавная картинка даже в тяжёлых сценах и на средних компьютерах.</p>
+      <div class="feat">
+        <div class="feat-ic">⚡</div>
+        <h3>Высокий FPS</h3>
+        <p>Оптимизация рендера. Плавная картинка даже на средних ПК.</p>
       </div>
-      <div class="f-card">
-        <div class="f-icon">🎨</div>
-        <h3>Стильный интерфейс</h3>
-        <p>Современный HUD, приятные анимации меню и удобная настройка без лишней боли.</p>
+      <div class="feat">
+        <div class="feat-ic">🎨</div>
+        <h3>Стильный GUI</h3>
+        <p>Стеклянный Click GUI с поиском, вкладками и удобными переключателями.</p>
       </div>
-      <div class="f-card">
-        <div class="f-icon">💎</div>
+      <div class="feat">
+        <div class="feat-ic">💎</div>
         <h3>Уникальные эффекты</h3>
-        <p>Кристальные партиклы, мягкое свечение, детализированные анимации — то, чего нет в ванилле.</p>
+        <p>China Hat, Trails, Particles, Emotions и десятки других Visuals.</p>
       </div>
-      <div class="f-card">
-        <div class="f-icon">🔧</div>
+      <div class="feat">
+        <div class="feat-ic">🔧</div>
         <h3>Простая настройка</h3>
-        <p>Включил — и сразу видно разницу. Никаких сложных конфигов и часов возни.</p>
+        <p>Включил модуль — сразу видно разницу. Без сложных конфигов.</p>
       </div>
-      <div class="f-card">
-        <div class="f-icon">🚀</div>
-        <h3>Постоянные обновления</h3>
-        <p>Клиент живёт и развивается. Новые эффекты, улучшения производительности и фиксы.</p>
+      <div class="feat">
+        <div class="feat-ic">🚀</div>
+        <h3>Обновления</h3>
+        <p>Клиент развивается: новые эффекты, фиксы и улучшения FPS.</p>
       </div>
     </div>
   </section>
 
-  <!-- SHOWCASE -->
+  <!-- INTERACTIVE GUI -->
+  <div class="gui-section" id="gui">
+    <div class="sh">
+      <h2>Попробуй Click GUI</h2>
+      <p>Кликай по вкладкам · включай модули · выбирай темы</p>
+    </div>
+    <div class="click-gui">
+      <div class="gui-side">
+        <div class="gui-logo">CRYSTAL</div>
+        <div class="gui-tab active" data-tab="visuals">Visuals <span class="cnt">34</span></div>
+        <div class="gui-tab" data-tab="display">Display <span class="cnt">16</span></div>
+        <div class="gui-tab" data-tab="utils">Utils <span class="cnt">29</span></div>
+        <div class="gui-tab" data-tab="themes">Themes</div>
+        <div class="gui-tab" data-tab="server">Server</div>
+        <div class="gui-tab" data-tab="events">Events</div>
+      </div>
+
+      <div class="gui-main active" id="t-visuals">
+        <div class="gui-search">🔍 Поиск...</div>
+        <div class="m-grid">
+          <div class="m-card"><div class="m-top"><span class="m-name">Ambience</span><div class="m-tog"></div></div><div class="m-desc">Время, погода и атмосфера мира</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Better Minecraft</span><div class="m-tog on"></div></div><div class="m-desc">Улучшения ванильного рендера</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">China Hat</span><div class="m-tog"></div></div><div class="m-desc">Китайская шляпа-конус на игроках</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Shader Hands</span><div class="m-tog"></div></div><div class="m-desc">Шейдерные руки: стекло / пламя</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">World Particles</span><div class="m-tog"></div></div><div class="m-desc">Красивые частицы вокруг вас</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Hit Particles</span><div class="m-tog"></div></div><div class="m-desc">Частицы от ударов</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Trails</span><div class="m-tog"></div></div><div class="m-desc">След за игроком (свечение)</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Emotions</span><div class="m-tog on"></div></div><div class="m-desc">Круговое меню эмоций</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Custom Pet</span><div class="m-tog on"></div></div><div class="m-desc">Питомец-компаньон рядом</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Fog Blur</span><div class="m-tog"></div></div><div class="m-desc">Размытие дальних пикселей</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Jump Circle</span><div class="m-tog"></div></div><div class="m-desc">Эффект круга при прыжке</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Kill Effect</span><div class="m-tog"></div></div><div class="m-desc">Эффект при убийстве</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Block Overlay</span><div class="m-tog on"></div></div><div class="m-desc">Анимация разрушения блока</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">View Model</span><div class="m-tog on"></div></div><div class="m-desc">Позиция и размер руки</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Item Physics</span><div class="m-tog on"></div></div><div class="m-desc">Физика выброшенных предметов</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">No Render</span><div class="m-tog on"></div></div><div class="m-desc">Скрыть выбранные эффекты</div></div>
+        </div>
+      </div>
+
+      <div class="gui-main" id="t-display">
+        <div class="gui-search">🔍 Поиск...</div>
+        <div class="m-grid">
+          <div class="m-card"><div class="m-top"><span class="m-name">Custom Hotbar</span><div class="m-tog on"></div></div><div class="m-desc">Стеклянный дизайн хотбара</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Array List</span><div class="m-tog on"></div></div><div class="m-desc">Список включённых модулей</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Target Hud</span><div class="m-tog on"></div></div><div class="m-desc">HUD с информацией о цели</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Watermark</span><div class="m-tog on"></div></div><div class="m-desc">Вотермарк с fps/tps</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Key Strokes</span><div class="m-tog on"></div></div><div class="m-desc">Нажатия клавиш движения</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Armor</span><div class="m-tog on"></div></div><div class="m-desc">Отображение надетой брони</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Inventory</span><div class="m-tog on"></div></div><div class="m-desc">Сетка предметов инвентаря</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Potions</span><div class="m-tog on"></div></div><div class="m-desc">Список активных эффектов</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Cooldowns</span><div class="m-tog on"></div></div><div class="m-desc">Кулдауны предметов</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Notifications</span><div class="m-tog on"></div></div><div class="m-desc">Тосты-уведомления</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Info</span><div class="m-tog"></div></div><div class="m-desc">bps, координаты, пинг, tps</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Interface</span><div class="m-tog on"></div></div><div class="m-desc">Общий стиль GUI</div></div>
+        </div>
+      </div>
+
+      <div class="gui-main" id="t-utils">
+        <div class="gui-search">🔍 Поиск...</div>
+        <div class="m-grid">
+          <div class="m-card"><div class="m-top"><span class="m-name">Auto Sprint</span><div class="m-tog"></div></div><div class="m-desc">Удерживает спринт вперёд</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Freelook</span><div class="m-tog"></div></div><div class="m-desc">Свободный обзор камерой</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Camera Settings</span><div class="m-tog on"></div></div><div class="m-desc">Плавный зум и F5</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Streamer Mode</span><div class="m-tog"></div></div><div class="m-desc">Скрывает ники и координаты</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Crystal Optimizer</span><div class="m-tog"></div></div><div class="m-desc">Быстрое разбивание кристаллов</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Optimization</span><div class="m-tog on"></div></div><div class="m-desc">Повышение FPS</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Item Scroller</span><div class="m-tog on"></div></div><div class="m-desc">Прокрутка инвентаря</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Elytra Swap</span><div class="m-tog"></div></div><div class="m-desc">Свап элитры на нагрудник</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Click Pearl</span><div class="m-tog"></div></div><div class="m-desc">Быстрый эндер-перл</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Auto Respawn</span><div class="m-tog"></div></div><div class="m-desc">Авто-возрождение</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Client Sounds</span><div class="m-tog on"></div></div><div class="m-desc">Звуки действий модулей</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">IRC</span><div class="m-tog on"></div></div><div class="m-desc">Общий чат клиента</div></div>
+        </div>
+      </div>
+
+      <div class="gui-main" id="t-themes">
+        <div class="t-grid">
+          <div class="t-card active"><div class="t-dots"><span style="background:#c4b5fd"></span><span style="background:#a78bfa"></span></div><div class="t-name">Клиентская</div></div>
+          <div class="t-card"><div class="t-dots"><span style="background:#22d3ee"></span><span style="background:#e879f9"></span></div><div class="t-name">Голубо-розовая</div></div>
+          <div class="t-card"><div class="t-dots"><span style="background:#4ade80"></span><span style="background:#3b82f6"></span></div><div class="t-name">Сине-зелёная</div></div>
+          <div class="t-card"><div class="t-dots"><span style="background:#3b82f6"></span><span style="background:#1e3a5f"></span></div><div class="t-name">Тёмно-синяя</div></div>
+          <div class="t-card"><div class="t-dots"><span style="background:#f1f5f9"></span><span style="background:#64748b"></span></div><div class="t-name">Чёрно-белая</div></div>
+          <div class="t-card"><div class="t-dots"><span style="background:#38bdf8"></span><span style="background:#0ea5e9"></span></div><div class="t-name">Водяная</div></div>
+          <div class="t-card"><div class="t-dots"><span style="background:#c084fc"></span><span style="background:#7c3aed"></span></div><div class="t-name">Фиолетовая</div></div>
+          <div class="t-card"><div class="t-dots"><span style="background:#e9d5ff"></span><span style="background:#a855f7"></span></div><div class="t-name">Лавандовая</div></div>
+          <div class="t-card"><div class="t-dots"><span style="background:#fb923c"></span><span style="background:#f472b6"></span></div><div class="t-name">Рассветная</div></div>
+          <div class="t-card"><div class="t-dots"><span style="background:#f97316"></span><span style="background:#a855f7"></span></div><div class="t-name">Закатная</div></div>
+          <div class="t-card"><div class="t-dots"><span style="background:#86efac"></span><span style="background:#4ade80"></span></div><div class="t-name">Весенняя</div></div>
+          <div class="t-card"><div class="t-dots"><span style="background:#fde047"></span><span style="background:#fb923c"></span></div><div class="t-name">Летняя</div></div>
+          <div class="t-card"><div class="t-dots"><span style="background:#e2e8f0"></span><span style="background:#94a3b8"></span></div><div class="t-name">Зимняя</div></div>
+          <div class="t-card"><div class="t-dots"><span style="background:#1e293b"></span><span style="background:#0f172a"></span></div><div class="t-name">Полуночная</div></div>
+        </div>
+      </div>
+
+      <div class="gui-main" id="t-server">
+        <div class="gui-search">🔍 Поиск...</div>
+        <div class="m-grid">
+          <div class="m-card"><div class="m-top"><span class="m-name">Auto Duel</span><div class="m-tog"></div></div><div class="m-desc">Автоматизация запросов на дуэли</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Auto Accept</span><div class="m-tog"></div></div><div class="m-desc">Авто-принятие телепортов</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Auto Resell</span><div class="m-tog"></div></div><div class="m-desc">Перевыставление на аукционе</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Party</span><div class="m-tog"></div></div><div class="m-desc">Метки участников Party</div></div>
+        </div>
+      </div>
+
+      <div class="gui-main" id="t-events">
+        <div class="gui-search">🔍 Поиск...</div>
+        <div class="m-grid">
+          <div class="m-card"><div class="m-top"><span class="m-name">Events</span><div class="m-tog"></div></div><div class="m-desc">Модули событий сервера</div></div>
+          <div class="m-card"><div class="m-top"><span class="m-name">Mines</span><div class="m-tog"></div></div><div class="m-desc">Модули для шахт и ивентов</div></div>
+        </div>
+      </div>
+    </div>
+    <p class="gui-note">Тестовое GUI · полный клиент после покупки в Discord</p>
+  </div>
+
   <div class="showcase">
     <div class="showcase-text">
       <h2>Создан для тех, кто любит красиво</h2>
-      <p>Crystal Visuals — это не просто «ещё один клиент». Это способ сделать Minecraft визуально современным и приятным без потери производительности.</p>
-      <ul class="check-list">
-        <li>Мгновенный визуальный апгрейд после установки</li>
-        <li>Комфорт даже в очень долгих сессиях</li>
-        <li>Поддержка актуальных версий Minecraft</li>
-        <li>Быстрая покупка и поддержка через Discord</li>
-        <li>Регулярные обновления и новые эффекты</li>
+      <p>Crystal — стеклянный GUI, мощные Visuals и Display, полезные Utils. Один клиент вместо кучи модов.</p>
+      <ul class="checks">
+        <li>Красивый Click GUI с поиском</li>
+        <li>34 Visuals + 16 Display модулей</li>
+        <li>Готовые цветовые темы</li>
+        <li>Оптимизация FPS из коробки</li>
+        <li>Покупка и поддержка в Discord</li>
       </ul>
     </div>
-    <div class="crystal-wrap">
-      <div class="crystal-glow"></div>
-      <div class="crystal"></div>
+    <div class="crystal-stage">
+      <div class="c-glow"></div>
+      <div class="c-main"></div>
     </div>
   </div>
 
-  <!-- HOW TO BUY -->
   <section id="how">
-    <h2 class="sec-title">Как купить</h2>
-    <p class="sec-sub">Три простых шага — и Crystal Visuals уже у тебя</p>
-    <div class="steps-grid">
+    <div class="sh">
+      <h2>Как купить</h2>
+      <p>Три простых шага</p>
+    </div>
+    <div class="steps">
       <div class="step">
-        <div class="step-num">1</div>
+        <div class="step-n">1</div>
         <h3>Зайди в Discord</h3>
-        <p>Нажми кнопку «Купить» и присоединяйся к нашему серверу.</p>
+        <p>Нажми «Купить» и присоединяйся к серверу</p>
       </div>
       <div class="step">
-        <div class="step-num">2</div>
+        <div class="step-n">2</div>
         <h3>Выбери тариф</h3>
-        <p>В канале покупок выбери нужный вариант и оплати удобным способом.</p>
+        <p>В канале покупок выбери вариант и оплати</p>
       </div>
       <div class="step">
-        <div class="step-num">3</div>
-        <h3>Получи доступ</h3>
-        <p>Мгновенно получишь клиент и инструкции. Можно играть сразу.</p>
+        <div class="step-n">3</div>
+        <h3>Получи Crystal</h3>
+        <p>Сразу получишь клиент и инструкцию</p>
       </div>
     </div>
   </section>
 
-  <!-- FAQ -->
-  <section id="faq">
-    <h2 class="sec-title">Частые вопросы</h2>
-    <p class="sec-sub">Коротко о самом важном</p>
-    <div class="faq-list">
+  <section>
+    <div class="sh">
+      <h2>FAQ</h2>
+      <p>Коротко по делу</p>
+    </div>
+    <div class="faq">
       <div class="faq-item">
-        <button class="faq-q">На каких версиях Minecraft работает? <span>+</span></button>
-        <div class="faq-a">Клиент поддерживает актуальные версии 1.21 и выше. Точный список всегда можно уточнить в Discord.</div>
+        <button class="faq-q">На каких версиях работает? <span>+</span></button>
+        <div class="faq-a">Актуальные версии Minecraft. Точный список — в Discord.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">Сложно ли установить? <span>+</span></button>
-        <div class="faq-a">Нет. После покупки ты получишь понятную инструкцию. Обычно установка занимает пару минут.</div>
+        <button class="faq-q">Сложно установить? <span>+</span></button>
+        <div class="faq-a">Нет. После покупки придёт понятная инструкция — обычно пара минут.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">Будет ли поддержка после покупки? <span>+</span></button>
-        <div class="faq-a">Да. В Discord всегда можно задать вопрос — поможем с установкой, настройкой и обновлениями.</div>
+        <button class="faq-q">Есть поддержка? <span>+</span></button>
+        <div class="faq-a">Да. В Discord помогут с установкой, настройкой и обновлениями.</div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">Можно ли вернуть деньги? <span>+</span></button>
-        <div class="faq-a">Условия возврата обсуждаются индивидуально. Напиши в Discord — разберёмся.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Это чит-клиент? <span>+</span></button>
-        <div class="faq-a">Crystal Visuals — визуальный клиент. Фокус на графике, FPS и комфорте. Подробности о функциях — в Discord.</div>
+        <button class="faq-q">Что за модули внутри? <span>+</span></button>
+        <div class="faq-a">Visuals, Display, Utils, темы и другое. Полный список видно в тестовом GUI выше.</div>
       </div>
     </div>
   </section>
 
-  <!-- FINAL CTA -->
-  <div class="cta-block">
-    <div class="cta-inner">
-      <h2>Готов поднять визуал?</h2>
-      <p>Присоединяйся к Discord и забери Crystal Visuals прямо сейчас</p>
-      <a href="https://discord.gg/Mr3k64MrT" target="_blank" rel="noopener" class="btn-glow">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-        Перейти в Discord
-      </a>
+  <div class="cta">
+    <div class="cta-box">
+      <h2>Готов к Crystal?</h2>
+      <p>Забирай полный клиент в Discord</p>
+      <a href="https://discord.gg/Mr3k64MrT" target="_blank" rel="noopener" class="btn">Купить в Discord</a>
     </div>
   </div>
 
   <footer>
-    <p>© 2026 Crystal Visuals · <a href="https://discord.gg/Mr3k64MrT" target="_blank" rel="noopener">Discord</a></p>
+    <p>© 2026 Crystal · <a href="https://discord.gg/Mr3k64MrT" target="_blank" rel="noopener">Discord</a></p>
   </footer>
 
   <script>
-    // Particles
-    const box = document.getElementById('particles');
-    for (let i = 0; i < 36; i++) {
-      const p = document.createElement('div');
-      p.className = 'particle';
-      p.style.left = Math.random() * 100 + '%';
-      p.style.animationDuration = (9 + Math.random() * 16) + 's';
-      p.style.animationDelay = Math.random() * 12 + 's';
-      const s = 2 + Math.random() * 3.5;
-      p.style.width = p.style.height = s + 'px';
-      box.appendChild(p);
+    const canvas = document.getElementById('bg');
+    const ctx = canvas.getContext('2d');
+    let w, h, ps = [];
+    function resize() { w = canvas.width = innerWidth; h = canvas.height = innerHeight; }
+    resize();
+    addEventListener('resize', resize);
+    class P {
+      constructor() { this.reset(true); }
+      reset(init) {
+        this.x = Math.random() * w;
+        this.y = init ? Math.random() * h : h + 20;
+        this.s = 1 + Math.random() * 2.5;
+        this.v = 0.25 + Math.random() * 0.85;
+        this.o = 0.12 + Math.random() * 0.38;
+        this.c = Math.random() > 0.45 ? '168,85,247' : '34,211,238';
+      }
+      update() { this.y -= this.v; if (this.y < -20) this.reset(false); }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.s, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${this.c},${this.o})`;
+        ctx.fill();
+      }
+    }
+    for (let i = 0; i < 65; i++) ps.push(new P());
+    (function loop() {
+      ctx.clearRect(0, 0, w, h);
+      ps.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(loop);
+    })();
+
+    const box = document.getElementById('crystals');
+    for (let i = 0; i < 9; i++) {
+      const el = document.createElement('div');
+      el.className = 'crystal';
+      el.style.left = (4 + Math.random() * 92) + '%';
+      el.style.top = (8 + Math.random() * 72) + '%';
+      const sz = 18 + Math.random() * 36;
+      el.style.width = el.style.height = sz + 'px';
+      el.style.animationDuration = (9 + Math.random() * 11) + 's';
+      el.style.animationDelay = (Math.random() * 5) + 's';
+      el.style.opacity = 0.12 + Math.random() * 0.26;
+      box.appendChild(el);
     }
 
-    // Nav scroll
     const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 50);
+    addEventListener('scroll', () => nav.classList.toggle('on', scrollY > 45));
+
+    const nums = document.querySelectorAll('.stat-n');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const to = +el.dataset.to;
+        let cur = 0;
+        const step = to / 42;
+        const t = setInterval(() => {
+          cur += step;
+          if (cur >= to) { el.textContent = to; clearInterval(t); }
+          else el.textContent = Math.floor(cur);
+        }, 28);
+        io.unobserve(el);
+      });
+    }, { threshold: 0.4 });
+    nums.forEach(n => io.observe(n));
+
+    document.querySelectorAll('.gui-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.gui-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.gui-main').forEach(m => m.classList.remove('active'));
+        tab.classList.add('active');
+        const panel = document.getElementById('t-' + tab.dataset.tab);
+        if (panel) panel.classList.add('active');
+      });
     });
 
-    // Reveal on scroll
-    const reveal = (sel, stagger = 70) => {
-      const els = document.querySelectorAll(sel);
-      const obs = new IntersectionObserver((entries) => {
-        entries.forEach((e, i) => {
-          if (e.isIntersecting) {
-            setTimeout(() => e.target.classList.add('visible'), i * stagger);
-            obs.unobserve(e.target);
-          }
-        });
-      }, { threshold: 0.12 });
-      els.forEach(el => obs.observe(el));
-    };
-    reveal('.stat-card', 90);
-    reveal('.f-card', 80);
-    reveal('.step', 100);
+    document.querySelectorAll('.m-tog').forEach(t => {
+      t.addEventListener('click', e => {
+        e.stopPropagation();
+        t.classList.toggle('on');
+      });
+    });
 
-    // FAQ accordion
+    document.querySelectorAll('.t-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.t-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+      });
+    });
+
     document.querySelectorAll('.faq-q').forEach(btn => {
       btn.addEventListener('click', () => {
         const item = btn.parentElement;
-        const wasOpen = item.classList.contains('open');
+        const open = item.classList.contains('open');
         document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-        if (!wasOpen) item.classList.add('open');
+        if (!open) item.classList.add('open');
       });
     });
   </script>
