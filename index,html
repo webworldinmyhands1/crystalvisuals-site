@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crystal Visuals — Премиум визуальный клиент Minecraft</title>
+  <meta name="description" content="Crystal Visuals — красивый и мощный визуальный клиент для Minecraft. Кристальная графика, высокий FPS, стиль и комфорт." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #03030a;
+      --bg-2: #0a0618;
+      --card: rgba(20, 12, 45, 0.7);
+      --primary: #a855f7;
+      --primary-2: #c084fc;
+      --cyan: #22d3ee;
+      --pink: #e879f9;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --border: rgba(168, 85, 247, 0.28);
+      --glass: rgba(255, 255, 255, 0.05);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.65;
+    }
+
+    /* ========== BG ========== */
+    .bg-layer {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(168, 85, 247, 0.25), transparent),
+        radial-gradient(ellipse 60% 40% at 90% 10%, rgba(34, 211, 238, 0.15), transparent),
+        radial-gradient(ellipse 50% 30% at 50% 100%, rgba(232, 121, 249, 0.12), transparent),
+        var(--bg);
+    }
+    .bg-effects {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.5;
+      animation: drift 20s ease-in-out infinite;
+    }
+    .orb-a { width: 480px; height: 480px; background: var(--primary); top: -160px; left: -100px; }
+    .orb-b { width: 380px; height: 380px; background: var(--cyan); bottom: -80px; right: -60px; animation-delay: -7s; opacity: 0.35; }
+    .orb-c { width: 280px; height: 280px; background: var(--pink); top: 40%; left: 60%; animation-delay: -14s; opacity: 0.25; }
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      40% { transform: translate(50px, -40px) scale(1.08); }
+      70% { transform: translate(-35px, 30px) scale(0.94); }
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--primary-2);
+      box-shadow: 0 0 10px var(--primary-2);
+      opacity: 0.55;
+      animation: rise linear infinite;
+    }
+    @keyframes rise {
+      0% { transform: translateY(105vh) scale(0.3); opacity: 0; }
+      12% { opacity: 0.7; }
+      88% { opacity: 0.4; }
+      100% { transform: translateY(-15vh) scale(1.1); opacity: 0; }
+    }
+
+    /* ========== NAV ========== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 0.95rem 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(3, 3, 10, 0.72);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    nav.scrolled {
+      background: rgba(3, 3, 10, 0.92);
+      border-bottom-color: var(--border);
+    }
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 1.28rem;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: linear-gradient(120deg, #f0abfc, #22d3ee, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo span { font-size: 1.4rem; filter: drop-shadow(0 0 10px var(--primary)); -webkit-text-fill-color: initial; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.6rem;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: color 0.25s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      padding: 0.5rem 1.25rem;
+      background: linear-gradient(135deg, var(--primary), #7c3aed);
+      color: #fff;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      text-decoration: none;
+      box-shadow: 0 0 22px rgba(168, 85, 247, 0.45);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 32px rgba(168, 85, 247, 0.7);
+    }
+
+    /* ========== HERO ========== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 7rem 1.4rem 5rem;
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.42rem 1.1rem;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 0.84rem;
+      color: var(--cyan);
+      margin-bottom: 1.6rem;
+      backdrop-filter: blur(10px);
+      animation: fadeUp 0.9s ease both;
+    }
+    .hero-badge i {
+      width: 8px; height: 8px;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--cyan);
+      animation: blink 1.8s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(1.4); }
+    }
+
+    .hero h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2.7rem, 9vw, 5.4rem);
+      font-weight: 800;
+      line-height: 1.08;
+      margin-bottom: 0.4rem;
+      background: linear-gradient(125deg, #f0abfc 0%, #22d3ee 40%, #a855f7 80%, #f0abfc 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeUp 0.9s 0.12s ease both, shine 6s linear infinite;
+      filter: drop-shadow(0 0 40px rgba(168, 85, 247, 0.35));
+    }
+    @keyframes shine {
+      to { background-position: 200% center; }
+    }
+    .hero-sub {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1rem, 2.8vw, 1.35rem);
+      font-weight: 500;
+      color: var(--primary-2);
+      margin-bottom: 1.3rem;
+      letter-spacing: 1px;
+      animation: fadeUp 0.9s 0.22s ease both;
+    }
+    .hero p {
+      font-size: clamp(1.02rem, 2.4vw, 1.22rem);
+      color: var(--muted);
+      max-width: 540px;
+      margin-bottom: 2.4rem;
+      animation: fadeUp 0.9s 0.32s ease both;
+    }
+    .hero-btns {
+      display: flex;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.9s 0.42s ease both;
+    }
+
+    .btn-glow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 1.05rem 2.3rem;
+      background: linear-gradient(135deg, #a855f7, #7c3aed, #22d3ee);
+      background-size: 220% 220%;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.08rem;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 0 28px rgba(168, 85, 247, 0.55), 0 10px 28px rgba(0,0,0,0.35);
+      animation: gradMove 5s ease infinite;
+    }
+    @keyframes gradMove {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    .btn-glow::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.28), transparent 70%);
+      transform: translateX(-120%);
+      transition: transform 0.55s ease;
+    }
+    .btn-glow:hover::after { transform: translateX(120%); }
+    .btn-glow:hover {
+      transform: translateY(-4px) scale(1.04);
+      box-shadow: 0 0 48px rgba(168, 85, 247, 0.85), 0 14px 36px rgba(0,0,0,0.4);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 1.05rem 1.9rem;
+      background: transparent;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 1.02rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      text-decoration: none;
+      transition: all 0.3s;
+      backdrop-filter: blur(8px);
+    }
+    .btn-ghost:hover {
+      background: var(--glass);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      color: var(--muted);
+      font-size: 0.78rem;
+      animation: bob 2.4s infinite;
+    }
+    .scroll-hint .arr {
+      width: 18px; height: 18px;
+      border-right: 2px solid var(--primary);
+      border-bottom: 2px solid var(--primary);
+      transform: rotate(45deg);
+    }
+    @keyframes bob {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(9px); }
+    }
+
+    /* ========== STATS ========== */
+    .stats {
+      max-width: 1000px;
+      margin: -1rem auto 0;
+      padding: 0 1.4rem 4rem;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1.1rem;
+      padding: 1.4rem 1rem;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      transition: transform 0.35s, box-shadow 0.35s;
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    .stat-card.visible { opacity: 1; transform: translateY(0); }
+    .stat-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.3), 0 0 24px rgba(168, 85, 247, 0.15);
+    }
+    .stat-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--cyan), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.25rem;
+    }
+    .stat-label { color: var(--muted); font-size: 0.88rem; }
+
+    /* ========== SECTIONS COMMON ========== */
+    section {
+      padding: 5rem 1.4rem;
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+    .sec-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.75rem, 4vw, 2.55rem);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 0.7rem;
+      background: linear-gradient(135deg, #e879f9, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .sec-sub {
+      text-align: center;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 3.2rem;
+      font-size: 1.05rem;
+    }
+
+    /* ========== FEATURES ========== */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.35rem;
+    }
+    .f-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1.2rem;
+      padding: 1.7rem;
+      backdrop-filter: blur(14px);
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(36px);
+    }
+    .f-card.visible { opacity: 1; transform: translateY(0); }
+    .f-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), var(--cyan), transparent);
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+    .f-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(168, 85, 247, 0.55);
+      box-shadow: 0 22px 44px rgba(0,0,0,0.35), 0 0 28px rgba(168, 85, 247, 0.18);
+    }
+    .f-card:hover::before { opacity: 1; }
+    .f-icon {
+      width: 50px; height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      background: linear-gradient(145deg, rgba(168, 85, 247, 0.22), rgba(34, 211, 238, 0.12));
+      border-radius: 13px;
+      margin-bottom: 1.1rem;
+      border: 1px solid var(--border);
+      transition: transform 0.35s;
+    }
+    .f-card:hover .f-icon { transform: scale(1.12) rotate(-4deg); }
+    .f-card h3 { font-size: 1.18rem; font-weight: 600; margin-bottom: 0.45rem; }
+    .f-card p { color: var(--muted); font-size: 0.94rem; }
+
+    /* ========== SHOWCASE ========== */
+    .showcase {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 3rem;
+      align-items: center;
+      padding: 5.5rem 1.4rem;
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+    .showcase-text h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.65rem, 3.5vw, 2.25rem);
+      margin-bottom: 1.1rem;
+      background: linear-gradient(135deg, #f0abfc, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .showcase-text p {
+      color: var(--muted);
+      margin-bottom: 1.4rem;
+      font-size: 1.05rem;
+    }
+    .check-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .check-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-weight: 500;
+    }
+    .check-list li::before {
+      content: '✦';
+      color: var(--cyan);
+      font-size: 1.05rem;
+      filter: drop-shadow(0 0 7px var(--cyan));
+    }
+
+    .crystal-wrap {
+      position: relative;
+      height: 340px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .crystal-glow {
+      position: absolute;
+      width: 260px; height: 260px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.4), transparent 70%);
+      border-radius: 50%;
+      filter: blur(28px);
+      animation: pulseG 4.5s ease-in-out infinite;
+    }
+    @keyframes pulseG {
+      0%, 100% { transform: scale(1); opacity: 0.55; }
+      50% { transform: scale(1.2); opacity: 0.9; }
+    }
+    .crystal {
+      width: 170px; height: 170px;
+      background: linear-gradient(150deg, rgba(168, 85, 247, 0.55), rgba(34, 211, 238, 0.3), rgba(232, 121, 249, 0.4));
+      clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+      position: relative;
+      animation: cFloat 7s ease-in-out infinite;
+      box-shadow: 0 0 55px rgba(168, 85, 247, 0.45), inset 0 0 35px rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+    .crystal::before {
+      content: '';
+      position: absolute;
+      inset: 14px;
+      background: linear-gradient(155deg, rgba(255,255,255,0.2), transparent 55%);
+      clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+    }
+    .crystal::after {
+      content: '';
+      position: absolute;
+      top: 28%; left: 32%;
+      width: 28%; height: 18%;
+      background: rgba(255,255,255,0.35);
+      filter: blur(4px);
+      border-radius: 40%;
+      transform: rotate(-25deg);
+    }
+    @keyframes cFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(6deg); }
+    }
+
+    /* ========== STEPS ========== */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.4rem;
+      counter-reset: step;
+    }
+    .step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1.2rem;
+      padding: 1.8rem 1.4rem;
+      text-align: center;
+      position: relative;
+      backdrop-filter: blur(12px);
+      transition: transform 0.35s, box-shadow 0.35s;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .step.visible { opacity: 1; transform: translateY(0); }
+    .step:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.3);
+    }
+    .step-num {
+      width: 42px; height: 42px;
+      margin: 0 auto 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      background: linear-gradient(135deg, var(--primary), var(--cyan));
+      border-radius: 50%;
+      box-shadow: 0 0 18px rgba(168, 85, 247, 0.45);
+    }
+    .step h3 { font-size: 1.12rem; margin-bottom: 0.5rem; }
+    .step p { color: var(--muted); font-size: 0.92rem; }
+
+    /* ========== FAQ ========== */
+    .faq-list {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .faq-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: border-color 0.3s;
+    }
+    .faq-item.open { border-color: rgba(168, 85, 247, 0.5); }
+    .faq-q {
+      width: 100%;
+      padding: 1.15rem 1.3rem;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.02rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      font-family: inherit;
+    }
+    .faq-q span {
+      font-size: 1.3rem;
+      color: var(--primary-2);
+      transition: transform 0.3s;
+    }
+    .faq-item.open .faq-q span { transform: rotate(45deg); }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s;
+      color: var(--muted);
+      font-size: 0.95rem;
+      padding: 0 1.3rem;
+    }
+    .faq-item.open .faq-a {
+      max-height: 200px;
+      padding: 0 1.3rem 1.2rem;
+    }
+
+    /* ========== CTA ========== */
+    .cta-block {
+      text-align: center;
+      padding: 4.5rem 1.4rem 6rem;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .cta-inner {
+      background: linear-gradient(145deg, rgba(168, 85, 247, 0.14), rgba(34, 211, 238, 0.08));
+      border: 1px solid var(--border);
+      border-radius: 1.8rem;
+      padding: 3.2rem 2rem;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+    }
+    .cta-inner::before {
+      content: '';
+      position: absolute;
+      top: -60%; left: -60%;
+      width: 220%; height: 220%;
+      background: conic-gradient(from 0deg, transparent, rgba(168, 85, 247, 0.12), transparent 35%);
+      animation: spin 14s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .cta-inner > * { position: relative; z-index: 1; }
+    .cta-inner h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.55rem, 3.5vw, 2.15rem);
+      margin-bottom: 0.7rem;
+    }
+    .cta-inner p {
+      color: var(--muted);
+      margin-bottom: 1.8rem;
+      font-size: 1.05rem;
+    }
+
+    /* ========== FOOTER ========== */
+    footer {
+      text-align: center;
+      padding: 2.2rem 1.4rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    footer a {
+      color: var(--primary-2);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    footer a:hover { color: var(--cyan); }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 900px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .showcase { grid-template-columns: 1fr; gap: 2.5rem; }
+      .steps-grid { grid-template-columns: 1fr; max-width: 380px; margin: 0 auto; }
+      .nav-links a:not(.nav-cta) { display: none; }
+    }
+    @media (max-width: 560px) {
+      .hero-btns { width: 100%; max-width: 300px; flex-direction: column; }
+      .btn-glow, .btn-ghost { width: 100%; justify-content: center; }
+      .stats { gap: 0.75rem; }
+      .stat-num { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-layer"></div>
+  <div class="bg-effects" id="particles"></div>
+
+  <nav id="nav">
+    <div class="logo"><span>💎</span> Crystal Visuals</div>
+    <div class="nav-links">
+      <a href="#features">Фичи</a>
+      <a href="#how">Как купить</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://discord.gg/Mr3k64MrT" target="_blank" rel="noopener" class="nav-cta">Купить</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-badge"><i></i> Премиум визуальный клиент</div>
+    <h1>Crystal Visuals</h1>
+    <div class="hero-sub">Minecraft · Visual Experience</div>
+    <p>Кристально чистая графика, высокий FPS и стиль, от которого не хочется отрываться. Один клиент — и игра выглядит совсем иначе.</p>
+    <div class="hero-btns">
+      <a href="https://discord.gg/Mr3k64MrT" target="_blank" rel="noopener" class="btn-glow">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        Купить в Discord
+      </a>
+      <a href="#features" class="btn-ghost">Смотреть фичи ↓</a>
+    </div>
+    <div class="scroll-hint"><span>Листай вниз</span><div class="arr"></div></div>
+  </header>
+
+  <!-- STATS -->
+  <div class="stats" id="stats">
+    <div class="stat-card">
+      <div class="stat-num">240+</div>
+      <div class="stat-label">FPS на средних ПК</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">1.21+</div>
+      <div class="stat-label">Актуальные версии</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Визуальных эффектов</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">Поддержка в Discord</div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <h2 class="sec-title">Почему именно Crystal</h2>
+    <p class="sec-sub">Всё, что делает игру красивой и приятной — собрано в одном клиенте</p>
+    <div class="features-grid">
+      <div class="f-card">
+        <div class="f-icon">✨</div>
+        <h3>Кристальная графика</h3>
+        <p>Мягкое освещение, чистые текстуры и эффекты, которые превращают обычный мир в визуальный кайф.</p>
+      </div>
+      <div class="f-card">
+        <div class="f-icon">⚡</div>
+        <h3>Высокий и стабильный FPS</h3>
+        <p>Оптимизированный рендер. Плавная картинка даже в тяжёлых сценах и на средних компьютерах.</p>
+      </div>
+      <div class="f-card">
+        <div class="f-icon">🎨</div>
+        <h3>Стильный интерфейс</h3>
+        <p>Современный HUD, приятные анимации меню и удобная настройка без лишней боли.</p>
+      </div>
+      <div class="f-card">
+        <div class="f-icon">💎</div>
+        <h3>Уникальные эффекты</h3>
+        <p>Кристальные партиклы, мягкое свечение, детализированные анимации — то, чего нет в ванилле.</p>
+      </div>
+      <div class="f-card">
+        <div class="f-icon">🔧</div>
+        <h3>Простая настройка</h3>
+        <p>Включил — и сразу видно разницу. Никаких сложных конфигов и часов возни.</p>
+      </div>
+      <div class="f-card">
+        <div class="f-icon">🚀</div>
+        <h3>Постоянные обновления</h3>
+        <p>Клиент живёт и развивается. Новые эффекты, улучшения производительности и фиксы.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHOWCASE -->
+  <div class="showcase">
+    <div class="showcase-text">
+      <h2>Создан для тех, кто любит красиво</h2>
+      <p>Crystal Visuals — это не просто «ещё один клиент». Это способ сделать Minecraft визуально современным и приятным без потери производительности.</p>
+      <ul class="check-list">
+        <li>Мгновенный визуальный апгрейд после установки</li>
+        <li>Комфорт даже в очень долгих сессиях</li>
+        <li>Поддержка актуальных версий Minecraft</li>
+        <li>Быстрая покупка и поддержка через Discord</li>
+        <li>Регулярные обновления и новые эффекты</li>
+      </ul>
+    </div>
+    <div class="crystal-wrap">
+      <div class="crystal-glow"></div>
+      <div class="crystal"></div>
+    </div>
+  </div>
+
+  <!-- HOW TO BUY -->
+  <section id="how">
+    <h2 class="sec-title">Как купить</h2>
+    <p class="sec-sub">Три простых шага — и Crystal Visuals уже у тебя</p>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Зайди в Discord</h3>
+        <p>Нажми кнопку «Купить» и присоединяйся к нашему серверу.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Выбери тариф</h3>
+        <p>В канале покупок выбери нужный вариант и оплати удобным способом.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Получи доступ</h3>
+        <p>Мгновенно получишь клиент и инструкции. Можно играть сразу.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <h2 class="sec-title">Частые вопросы</h2>
+    <p class="sec-sub">Коротко о самом важном</p>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q">На каких версиях Minecraft работает? <span>+</span></button>
+        <div class="faq-a">Клиент поддерживает актуальные версии 1.21 и выше. Точный список всегда можно уточнить в Discord.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Сложно ли установить? <span>+</span></button>
+        <div class="faq-a">Нет. После покупки ты получишь понятную инструкцию. Обычно установка занимает пару минут.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Будет ли поддержка после покупки? <span>+</span></button>
+        <div class="faq-a">Да. В Discord всегда можно задать вопрос — поможем с установкой, настройкой и обновлениями.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Можно ли вернуть деньги? <span>+</span></button>
+        <div class="faq-a">Условия возврата обсуждаются индивидуально. Напиши в Discord — разберёмся.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Это чит-клиент? <span>+</span></button>
+        <div class="faq-a">Crystal Visuals — визуальный клиент. Фокус на графике, FPS и комфорте. Подробности о функциях — в Discord.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <div class="cta-block">
+    <div class="cta-inner">
+      <h2>Готов поднять визуал?</h2>
+      <p>Присоединяйся к Discord и забери Crystal Visuals прямо сейчас</p>
+      <a href="https://discord.gg/Mr3k64MrT" target="_blank" rel="noopener" class="btn-glow">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        Перейти в Discord
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 Crystal Visuals · <a href="https://discord.gg/Mr3k64MrT" target="_blank" rel="noopener">Discord</a></p>
+  </footer>
+
+  <script>
+    // Particles
+    const box = document.getElementById('particles');
+    for (let i = 0; i < 36; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDuration = (9 + Math.random() * 16) + 's';
+      p.style.animationDelay = Math.random() * 12 + 's';
+      const s = 2 + Math.random() * 3.5;
+      p.style.width = p.style.height = s + 'px';
+      box.appendChild(p);
+    }
+
+    // Nav scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Reveal on scroll
+    const reveal = (sel, stagger = 70) => {
+      const els = document.querySelectorAll(sel);
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach((e, i) => {
+          if (e.isIntersecting) {
+            setTimeout(() => e.target.classList.add('visible'), i * stagger);
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      els.forEach(el => obs.observe(el));
+    };
+    reveal('.stat-card', 90);
+    reveal('.f-card', 80);
+    reveal('.step', 100);
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-q').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!wasOpen) item.classList.add('open');
+      });
+    });
+  </script>
+</body>
+</html>
